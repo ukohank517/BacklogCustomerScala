@@ -7,7 +7,7 @@ import play.api._
 import play.api.libs.ws._
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import java.lang.ProcessBuilder.Redirect
 
 
@@ -31,8 +31,27 @@ class HomeController @Inject()(backlogApi: BacklogApiClient, val controllerCompo
     Redirect(oauth2Url)
   }
 
-  def fetchApiData() = Action.async {
-    backlogApi.get("/api/v2/space/activities").map { response =>
+  def dashboard() = Action.async { implicit request: Request[AnyContent] =>
+    // val queryParam = request.queryString
+    val code = request.getQueryString("code").getOrElse("")
+    if (code.isEmpty()) {
+      Future.successful(BadRequest("Missing code parameter"))
+    }else{
+      backlogApi.getToken(code).map { case (accessToken, refreshToken) =>
+        Redirect("/showToken").withCookies(
+          Cookie("refreshToken", refreshToken, httpOnly = true),
+        ).flashing("accessToken" -> accessToken)
+      }
+    }
+  }
+
+  def showActivity() = Action.async { implicit request: Request[AnyContent] =>
+    val accessToken = request.flash.get("accessToken").getOrElse("No access token")
+    val refreshToken = request.cookies.get("refreshToken").map(_.value).getOrElse("No refresh token")
+
+    println(s"accessToken: $accessToken, refreshToken: $refreshToken")
+
+    backlogApi.get("/api/v2/space/activities", accessToken).map { response =>
       Ok(response)
     }
   }
