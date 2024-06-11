@@ -10,10 +10,16 @@ import play.api.Configuration
 class BacklogApiClient @Inject()(ws: WSClient, config: Configuration)(implicit ec: ExecutionContext) {
 
   private val baseUrl = "https://nu-rec-uk.backlog.com" // ベースURL
-  private val param = "?apiKey=**"
+  private val clientId = config.get[String]("backlogApi.clientId")
+  private val clientSecret = config.get[String]("backlogApi.clientSecret")
+  private val redirectUri = config.get[String]("backlogApi.redirectUri")
+
+  def getOAuthPath: String = {
+    s"${baseUrl}/OAuth2AccessRequest.action?response_type=code&client_id=$clientId&redirect_uri=$redirectUri"
+  }
 
   def get(path: String, accessToken: String): Future[String] = {
-    ws.url(s"$baseUrl$path$param")
+    ws.url(s"$baseUrl$path")
     .withHttpHeaders("Authorization" -> s"Bearer $accessToken")
     .get().map { response =>
       response.body
@@ -31,9 +37,9 @@ class BacklogApiClient @Inject()(ws: WSClient, config: Configuration)(implicit e
     val data = Map(
       "grant_type" -> "authorization_code",
       "code" -> code,
-      "redirect_uri" -> config.get[String]("backlogApi.redirectUri"),
-      "client_id" -> config.get[String]("backlogApi.clientId"),
-      "client_secret" -> config.get[String]("backlogApi.clientSecret"),
+      "redirect_uri" -> redirectUri,
+      "client_id" -> clientId,
+      "client_secret" -> clientSecret
     )
 
     ws.url(tokenUrl)

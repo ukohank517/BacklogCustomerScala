@@ -26,29 +26,42 @@ class HomeController @Inject()(backlogApi: BacklogApiClient, val controllerCompo
    */
 
   def index() = Action { implicit request: Request[AnyContent] =>
-    // Ok(views.html.index())
-    var oauth2Url = "https://nu-rec-uk.backlog.com/OAuth2AccessRequest.action?response_type=code&client_id=cUOxzn2NgqneQTYeOlzMbmu3QT4jUmmt&redirect_uri=http://localhost:9000/dashboard/activity"
-    Redirect(oauth2Url)
+    // TODO: token情報なし|api呼び出し失敗時エラー画面飛ばす。
+    Redirect(routes.HomeController.errorPage("todo"))
   }
 
-  def dashboard() = Action.async { implicit request: Request[AnyContent] =>
-    // val queryParam = request.queryString
+  // auth2認証
+  def auth() = Action { implicit request: Request[AnyContent] =>
+    Redirect(backlogApi.getOAuthPath)
+  }
+
+  // oauthのcallback
+  def authCallback() = Action.async { implicit request: Request[AnyContent] =>
     val code = request.getQueryString("code").getOrElse("")
     if (code.isEmpty()) {
+      // Redirect(routes.HomeController.errorPage("Missing code parameter"))
       Future.successful(BadRequest("Missing code parameter"))
     }else{
       backlogApi.getToken(code).map { case (accessToken, refreshToken) =>
-        Redirect("/showToken").withCookies(
+        Redirect("/backlog/activity").withCookies(
           Cookie("refreshToken", refreshToken, httpOnly = true),
-        ).flashing("accessToken" -> accessToken)
+          Cookie("accessToken", accessToken, httpOnly = true)
+        )
       }
     }
   }
 
+  // error page, re-certification
+  def errorPage(errorMessage: String) = Action { implicit request: Request[AnyContent] =>
+    Ok(views.html.error(errorMessage))
+  }
+
+
   def showActivity() = Action.async { implicit request: Request[AnyContent] =>
-    val accessToken = request.flash.get("accessToken").getOrElse("No access token")
+    val accessToken = request.cookies.get("accessToken").map(_.value).getOrElse("No refresh token")
     val refreshToken = request.cookies.get("refreshToken").map(_.value).getOrElse("No refresh token")
 
+    // TODO: delete
     println(s"accessToken: $accessToken, refreshToken: $refreshToken")
 
     backlogApi.get("/api/v2/space/activities", accessToken).map { response =>

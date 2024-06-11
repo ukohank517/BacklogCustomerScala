@@ -1,0 +1,9 @@
+@(errorMessage: String)
+
+@main("Error Page") {
+  <div style="text-align: center; margin-top: 50px;">
+    <h1>Authentication error</h1>
+    <p>@errorMessage</p>
+    <a href="/backlog/auth" class="btn btn-primary">Re-certification</a>
+  </div>
+}
