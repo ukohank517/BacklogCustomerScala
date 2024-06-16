@@ -16,7 +16,7 @@ class ApiClient @Inject()(ws: WSClient, baseUrl: String)(implicit ec: ExecutionC
     callApi(HttpVerbs.POST, path, headers, Some(body))
   }
 
-  // TODO: callApi[T]
+  // TODO: callApi[T]ジェネリクスを使用する
   def callApi(method: String, path: String, headers: Seq[(String, String)] = Seq(), body: Option[String] = None): Future[String] = {
     val url = s"$baseUrl$path"
 

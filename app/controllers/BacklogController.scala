@@ -56,6 +56,7 @@ class BacklogController @Inject()(backlogApi: BacklogApiClient, config: Configur
       throw new RuntimeException("Missing token")
     }
 
+    // TODO: ここをトークン更新ミドルウェアに移行する
     var futureAccessToken: Future[(String, Seq[Cookie])] = accessToken match {
       case "" => refreshToken match {
         case "" => Future.failed(new RuntimeException("Missing token"))
