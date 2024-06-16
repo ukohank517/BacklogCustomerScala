@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "6.0.0" % Test,
   "com.typesafe.play" %% "play-ahc-ws" % "2.9.3",
   "com.typesafe.play" %% "twirl-api" % "1.6.2",
+  "com.typesafe.play" %% "play-json" % "2.9.3",
 )
 
 // Adds additional packages into Twirl

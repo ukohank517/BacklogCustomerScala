@@ -66,7 +66,6 @@ class HomeController @Inject()(backlogApi: BacklogApiClient, config: Configurati
       case "" => refreshToken match {
         case "" => Future.failed(new RuntimeException("Missing token"))
         case _ => backlogApi.getRefreshToken(refreshToken).map { case (newAccessToken, expiresIn) =>
-          println(s"newAccessToken: $newAccessToken, expiresIn: $expiresIn")
           var appDomain = config.get[String]("app.domain")
           (newAccessToken, Seq(
             Cookie("accessToken", newAccessToken, httpOnly = true, secure = true, maxAge = Some(expiresIn), domain = Some(appDomain))
@@ -78,7 +77,7 @@ class HomeController @Inject()(backlogApi: BacklogApiClient, config: Configurati
 
     futureAccessToken.flatMap { case (newAccessToken, cookies) =>
       backlogApi.getActivities(newAccessToken).map { activities =>
-        Ok(activities).withCookies(cookies: _*)
+        Ok(views.html.activity(activities)).withCookies(cookies: _*)
       }
     }
   }
