@@ -21,9 +21,4 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   def index() = Action { _ =>
     throw new RuntimeException("このページは何ありません。認証してアクティビティページを確認してください。")
   }
-
-  def dashboard() = Action { request =>
-    val queryParam = request.queryString
-    Ok(queryParam.toString())
-  }
 }
