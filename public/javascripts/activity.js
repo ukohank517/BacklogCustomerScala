@@ -1,0 +1,1 @@
+console.log("avtivity.js is loaded!")
