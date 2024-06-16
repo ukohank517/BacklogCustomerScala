@@ -1,6 +1,8 @@
 # https://www.playframework.com/documentation/latest/Configuration
 play.modules.enabled += "play.api.libs.ws.ahc.AhcWSModule"
 
+app.domain = "localhost"
+
 backlogApi {
   clientId = "<YOUR_CLIENT_ID>",
   clientSecret = "<YOUR_CLIENT_SECRET>"
