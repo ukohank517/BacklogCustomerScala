@@ -1,9 +1,59 @@
 @import models.domain.Activity
-@(data: List[Activity])
+@(activityList: List[Activity])
 
 @main("Activity Data") {
-  <h1>Activity Data</h1>
-  <p>@data</p>
+  <div class="container mt-4">
+    <h1 class="mb-4">Backlog Customer</h1>
+    <div class="form-group">
+      <input type="text" class="form-control" id="search-keyword" placeholder="検索キーワード入力">
+    </div>
+
+    <h2>お気に入りのリスト</h2>
+    <table class="table table-bordered" id="fav-list">
+        <thead>
+            <tr>
+                <th>FAV</th>
+                <th>ID</th>
+                <th>PROJECT.NAME</th>
+                <th>TYPE</th>
+                <th>CONTENT.SUMMARY</th>
+                <th>CREATEDUSER.NAME</th>
+                <th>CREATED</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- お気に入りリストは最初は空 -->
+        </tbody>
+    </table>
+
+    <h2>検索結果</h2>
+    <table class="table table-bordered" id="search-results">
+        <thead>
+            <tr>
+                <th>FAV</th>
+                <th>ID</th>
+                <th>PROJECT.NAME</th>
+                <th>TYPE</th>
+                <th>CONTENT.SUMMARY</th>
+                <th>CREATEDUSER.NAME</th>
+                <th>CREATED</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(activity <- activityList) {
+                <tr data-id="@activity.id">
+                    <td><input type="checkbox" class="fav-checkbox" data-id="@activity.id"></td>
+                    <td>@activity.id</td>
+                    <td>@activity.projectName</td>
+                    <td>@activity.typeStr</td>
+                    <td>@activity.contentSummary</td>
+                    <td>@activity.createdUserName</td>
+                    <td>@activity.created</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
   <script src="@routes.Assets.versioned("javascripts/activity.js")" type="text/javascript"></script>
 }

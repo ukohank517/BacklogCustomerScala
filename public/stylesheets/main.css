@@ -1,0 +1,4 @@
+/*チェックボックスをホバー時にカーソルをポインターに変更*/
+.fav-checkbox {
+  cursor: pointer;
+}

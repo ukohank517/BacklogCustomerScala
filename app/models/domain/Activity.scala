@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 case class Activity(
   id: Long,
   projectName: String,
-  `type`: String,
+  typeStr: String,
   contentSummary: String,
   createdUserName: String,
   created: String
@@ -21,7 +21,7 @@ object Activity {
     Activity(
       id = activityDto.id,
       projectName = activityDto.project.name,
-      `type` = typeStr,
+      typeStr = typeStr,
       contentSummary = activityDto.content.summary.getOrElse(""),
       createdUserName = activityDto.createdUser.name,
       created = createdDate
