@@ -1,11 +1,10 @@
 package clients
 
-import javax.inject._
-import play.api.libs.ws._
-import scala.concurrent.{ExecutionContext, Future}
-import play.api.libs.json._
 import play.api.http.HttpVerbs
-import play.api.Configuration
+import play.api.libs.ws._
+
+import javax.inject._
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ApiClient @Inject()(ws: WSClient, baseUrl: String)(implicit ec: ExecutionContext) {

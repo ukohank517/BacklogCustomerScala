@@ -4,7 +4,6 @@ import models.dto.ActivityDto
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
-
 case class Activity(
   id: Long,
   projectName: String,
